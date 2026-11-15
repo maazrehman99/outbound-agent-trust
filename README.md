@@ -6,7 +6,40 @@ data does not support, measures how often they happen, and proves one fix on lea
 
 **Why:** the writer's own check (`emails.py check`) looks at the shape of an email: length, links, the greeting,
 clichés and repeated openers. It never checks whether what the email says is true. Evaboot's own write-up of the
-writer says the check found "0 problems" while one email still had to be rewritten "for a claim not in the data".
+writer ([How to Automate Cold Emails With AI](https://evaboot.com/blog/how-to-automate-cold-emails-with-ai),
+2026-10-26) says the check found "0 problems" while one email still had to be rewritten on review "for a claim not
+in the data".
+
+## The problem, and how it gets fixed
+
+**Today:** a person reading the emails is the only truth check.
+
+```mermaid
+flowchart LR
+    A["Lead: time in role is EMPTY"] --> B["facts(): empty = 0 months<br/>0 is under 6, so new_in_role = true"]
+    B --> C["Writer: 'Congrats on the<br/>Director role'"]
+    C --> D["emails.py check<br/>shape only: PASS"]
+    D --> E["A person must spot it<br/>(20 emails ok, 2,000 not)"]
+    style A fill:#fff3cd,stroke:#b8860b
+    style C fill:#f8d7da,stroke:#c0392b
+    style D fill:#f8d7da,stroke:#c0392b
+```
+
+**This repo:** measure the truth, find the cause, fix it, prove it on leads the fix never saw.
+
+```mermaid
+flowchart TD
+    T["1. Trap leads<br/>made by code, right answer known"] --> W["2. Their writer"]
+    W --> S["3. Their check (shape)"]
+    S --> R["4. Truth checks<br/>rules + claim judge (tested 10/10)"]
+    R --> V{"5. Pass or fail<br/>decided in code"}
+    V -- "failures" --> AG["6. Agent reads the failures,<br/>finds the pattern, reads the code,<br/>picks guards + writes prompt rules"]
+    AG -- "rerun on 16 practice leads" --> W
+    V -- "fixed" --> H["7. One test on 11 hidden leads<br/>22% untrue → 0% (55 emails)"]
+    style R fill:#d4edda,stroke:#1e7e34
+    style AG fill:#d1ecf1,stroke:#117a8b
+    style H fill:#d4edda,stroke:#1e7e34
+```
 
 **Start here:** [one lead, start to finish](examples/one-lead.md): a real email from the run, the three checkers, and the same lead after the fix.
 
