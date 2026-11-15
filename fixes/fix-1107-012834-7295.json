@@ -1,0 +1,11 @@
+{
+  "id": "fix-1107-012834-7295",
+  "name": "facts-grounding-v1",
+  "prompt_rules": "Truthfulness rules (apply to subject and body):\n1. Every claim about the lead or their company must come from a specific field in that lead's facts. If a field is missing or null, say nothing about it.\n2. Attribute numbers to where they belong. If the headline or summary mentions a result at a past employer, a client or a previous team, either name that employer/context explicitly in the same sentence or do not use it. Never present it, in the subject or body, as a result, team size or growth at the current company.\n3. Growth: only describe the company as growing, scaling or expanding if company_growth_1y_pct is positive. If it is zero, negative or missing, do not use growth as the hook and do not imply growth.\n4. New role: only mention a new role, starting or congratulations on a position if new_in_role is true AND months_in_role is a known number under 6 or the data flags a new position. If tenure is unknown, do not use the new role as a hook.\n5. Sales team: only state a sales team size if sales_team is a number, and use that exact number for the current company.\n6. Funding: never mention a raise, round, investors' money, valuation or funding amount unless the data states the round explicitly. Hints at investors or milestones are not a round.\n7. Hiring: never say or imply the lead is hiring unless the data says so; if the lead says they are not hiring, do not mention hiring.\n8. Do not guess how the lead spends their time or what they struggle with as if it were fact. Describe the offer's benefit in general terms instead.\n9. If after these rules no real hook remains, skip the lead with a reason rather than inventing one.",
+  "guards": [
+    "suppression_filter",
+    "tenure_unknown",
+    "link_site_skip"
+  ],
+  "rationale": "Baseline failures come from three causes: (a) facts() turns missing tenure into new_in_role=true, so the model is told something false -> tenure_unknown guard; (b) the writer cannot see the block list -> suppression_filter; (c) the model lifts past-employer numbers into the present -> attribution rule. link_site_skip makes an existing SKILL.md rule deterministic. The other rules close traps the baseline passed by luck (growth sign, funding, hiring, missing sales team), without naming any lead or number."
+}

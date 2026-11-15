@@ -1,0 +1,25 @@
+# Your own local LiteLLM proxy. The code only ever asks for "writer", "judge" or "agent";
+# this file decides which provider and model each one is. Change a line here to switch providers.
+model_list:
+  - model_name: writer              # Evaboot's n8n workflow pins this model
+    litellm_params:
+      model: anthropic/claude-sonnet-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+  - model_name: judge               # ideally a different family from the writer (less self-preference)
+    litellm_params:
+      model: anthropic/claude-opus-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+    # e.g. model: openai/gpt-5.5   api_key: os.environ/OPENAI_API_KEY
+    # e.g. model: gemini/gemini-3-pro   api_key: os.environ/GEMINI_API_KEY
+  - model_name: agent
+    litellm_params:
+      model: anthropic/claude-opus-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+litellm_settings:
+  drop_params: true                 # drop params a provider does not accept (e.g. temperature on Claude 5.5)
+  num_retries: 3
+  request_timeout: 600
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

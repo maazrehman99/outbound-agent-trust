@@ -1,0 +1,21 @@
+--- a/emails.py	2026-11-06 23:05:08.674750917 +0500
++++ b/emails.py	2026-11-06 23:40:58.004640527 +0500
+@@ -50,7 +50,8 @@
+     """export.json = the Evaboot export (get_export or the API). One entry per lead, only real fields."""
+     out = []
+     for p in json.load(open(path)).get("prospects") or []:
+-        months = (num(p.get("Years in Position")) or 0) * 12 + (num(p.get("Months in Position")) or 0)
++        years, mos = num(p.get("Years in Position")), num(p.get("Months in Position"))
++        months = None if years is None and mos is None else (years or 0) * 12 + (mos or 0)  # unknown stays unknown
+         out.append({
+             "id": p.get("Linkedin URL Unique ID") or p.get("Linkedin URL Public") or p.get("Full Name"),
+             "first_name": p.get("First Name") or "",
+@@ -62,7 +63,7 @@
+             "title": (p.get("Current Job") or "").strip(),
+             "company": p.get("Company Name") or "",
+             "months_in_role": months,
+-            "new_in_role": str(p.get("Has New Position")).lower() in ("true", "yes", "1") or months < 6,
++            "new_in_role": str(p.get("Has New Position")).lower() in ("true", "yes", "1") or (months is not None and months < 6),
+             "headline": " ".join((p.get("Profile Headline") or "").split()),
+             "summary": " ".join((p.get("Profile Summary") or "").split())[:700],
+             "company_description": " ".join((p.get("Company Description") or "").split())[:400],
