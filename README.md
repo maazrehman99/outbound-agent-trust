@@ -8,6 +8,8 @@ data does not support, measures how often they happen, and proves one fix on lea
 clichés and repeated openers. It never checks whether what the email says is true. Evaboot's own write-up of the
 writer says the check found "0 problems" while one email still had to be rewritten "for a claim not in the data".
 
+**Start here:** [one lead, start to finish](examples/one-lead.md): a real email from the run, the three checkers, and the same lead after the fix.
+
 ## How it works
 
 ```
